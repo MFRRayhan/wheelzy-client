@@ -1,0 +1,26 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* @plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  --color-primary: #feac00;
+  --color-secondary: #333;
+} */
+
+button:disabled {
+  @apply bg-primary text-white;
+}
+
+/* wheelzy CSS */
+.primary-menu a {
+  @apply px-4 py-2 rounded;
+}
+
+.primary-menu a.active {
+  @apply bg-primary text-white font-semibold;
+}
+
+.dashboard-sidebar li a.active {
+  @apply bg-primary text-white;
+}
