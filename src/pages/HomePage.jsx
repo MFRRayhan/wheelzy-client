@@ -17,15 +17,22 @@ const HomePage = () => {
     },
   });
 
-  const latestCars = cars
+  const latestCars = [...cars]
     .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
     .slice(0, 9);
 
   return (
-    <div className="space-y-20">
+    <div>
+      {/* Hero */}
       {!isLoading && <HeroSlider cars={latestCars} />}
+
+      {/* Featured Cars */}
       <Cars isFeatured={true} />
+
+      {/* How It Works */}
       <HowItWorks />
+
+      {/* Why Choose Us */}
       <WhyJoin />
     </div>
   );

@@ -1,4 +1,3 @@
-import { AuthContext } from "./AuthContext";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -9,10 +8,29 @@ import {
   updateProfile,
   sendPasswordResetEmail,
 } from "firebase/auth";
+
 import { useEffect, useState } from "react";
 import { auth } from "../firebase/firebase.config";
+import { AuthContext } from "./AuthContext";
 
 const googleProvider = new GoogleAuthProvider();
+
+// Create a fresh reference while preserving Firebase User methods
+const createUserProxy = (firebaseUser) => {
+  if (!firebaseUser) return null;
+
+  return new Proxy(firebaseUser, {
+    get(target, property) {
+      const value = Reflect.get(target, property, target);
+
+      if (typeof value === "function") {
+        return value.bind(target);
+      }
+
+      return value;
+    },
+  });
+};
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -44,10 +62,26 @@ const AuthProvider = ({ children }) => {
 
   // Update Firebase Profile
   const updateUserProfile = (profile) => {
+    if (!auth.currentUser) {
+      throw new Error("No authenticated user found.");
+    }
+
     return updateProfile(auth.currentUser, profile);
   };
 
-  // Forgot Password / Reset Password
+  // Refresh Firebase User
+  const refreshUser = async () => {
+    if (!auth.currentUser) {
+      throw new Error("No authenticated user found.");
+    }
+
+    await auth.currentUser.reload();
+
+    // Store a fresh user reference in React state
+    setUser(createUserProxy(auth.currentUser));
+  };
+
+  // Reset Password
   const resetPassword = (email) => {
     setLoading(true);
     return sendPasswordResetEmail(auth, email);
@@ -56,7 +90,7 @@ const AuthProvider = ({ children }) => {
   // Auth State Observer
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+      setUser(createUserProxy(currentUser));
       setLoading(false);
     });
 
@@ -69,6 +103,7 @@ const AuthProvider = ({ children }) => {
     signInWithGoogle,
     logout,
     updateUserProfile,
+    refreshUser,
     resetPassword,
     user,
     loading,

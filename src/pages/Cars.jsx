@@ -1,16 +1,28 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
+import { motion } from "framer-motion";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import Loader from "../components/Loader";
 import {
   FaLocationDot,
   FaUser,
-  FaDollarSign,
   FaBangladeshiTakaSign,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa6";
-import { FaCar, FaSearch } from "react-icons/fa";
+import { FaSearch, FaArrowRight } from "react-icons/fa";
 import { BsFuelPumpDiesel } from "react-icons/bs";
+
+const containerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.06 } },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+};
 
 const Cars = ({ isFeatured = false }) => {
   const axiosSecure = useAxiosSecure();
@@ -19,24 +31,23 @@ const Cars = ({ isFeatured = false }) => {
   const carsPerPage = 12;
 
   const { data: cars = [], isLoading } = useQuery({
-    queryKey: ["cars"],
+    queryKey: ["public-cars"],
     queryFn: async () => {
       const res = await axiosSecure.get("/cars");
       return res.data;
     },
   });
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <Loader fullScreen={false} />;
 
   const approvedCars = cars.filter((car) => car.status === "approved");
 
   const filteredCars = approvedCars
     .filter((car) =>
-      (car.carName || "").toLowerCase().includes(searchTerm.toLowerCase())
+      (car.carName || "").toLowerCase().includes(searchTerm.toLowerCase()),
     )
     .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
 
-  // Pagination calculations
   const indexOfLastCar = currentPage * carsPerPage;
   const indexOfFirstCar = indexOfLastCar - carsPerPage;
   const currentCars = isFeatured
@@ -48,163 +59,229 @@ const Cars = ({ isFeatured = false }) => {
   const goToPage = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   return (
-    <section className="container mx-auto py-10">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
-        <h2 className="text-3xl font-bold text-primary flex items-center gap-2">
-          <FaCar /> {isFeatured ? "Featured Cars" : "Explore Cars"}
-        </h2>
+    <section
+      className={`max-w-7xl pt-30 mx-auto px-4 sm:px-6 ${
+        isFeatured ? "py-20" : "py-12"
+      }`}
+    >
+      {/* ── Section header ── */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 mb-10">
+        <div>
+          {isFeatured && (
+            <span className="inline-block text-xs font-bold uppercase tracking-widest text-primary mb-2">
+              Featured
+            </span>
+          )}
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-base-content">
+            {isFeatured ? "Featured Cars" : "Explore All Cars"}
+          </h2>
+          {!isFeatured && (
+            <p className="text-sm text-base-content/50 mt-1">
+              {filteredCars.length} cars available
+            </p>
+          )}
+        </div>
 
         {!isFeatured && (
-          <form
-            className="relative w-full md:w-80"
-            onSubmit={(e) => e.preventDefault()}
-          >
-            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-2" />
+          <div className="relative w-full sm:w-72">
+            <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base-content/30 text-sm pointer-events-none" />
             <input
               type="text"
-              placeholder="Search cars by name..."
+              placeholder="Search by name..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
-                setCurrentPage(1); // Reset page on search
+                setCurrentPage(1);
               }}
-              className="input input-bordered w-full pl-10"
+              className="w-full h-11 pl-10 pr-4 bg-base-100 border border-base-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
             />
-          </form>
+          </div>
         )}
       </div>
 
-      {/* Cars Grid */}
+      {/* ── Cars grid ── */}
       {currentCars.length === 0 ? (
-        <p className="text-center text-gray-500">No cars found.</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {currentCars.map((car) => (
-            <div
-              key={car._id}
-              className="group rounded overflow-hidden shadow-md hover:shadow-xl transition duration-300 border border-gray-300 p-4 relative"
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <div className="w-16 h-16 bg-base-200 rounded-2xl flex items-center justify-center mb-4">
+            <BsFuelPumpDiesel className="text-base-content/30" size={28} />
+          </div>
+          <p className="text-base-content/60 font-medium">No cars found</p>
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm("")}
+              className="mt-3 text-sm text-primary hover:underline"
             >
-              <div className="relative h-52 overflow-hidden rounded-lg">
+              Clear search
+            </button>
+          )}
+        </div>
+      ) : (
+        <motion.div
+          key={`page-${currentPage}-${searchTerm}`}
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+        >
+          {currentCars.map((car) => (
+            <motion.div
+              key={car._id}
+              variants={cardVariants}
+              className="car-card group"
+            >
+              {/* Car Image */}
+              <div className="relative h-48 overflow-hidden bg-base-200">
                 <img
                   src={car.bannerImage || "/placeholder.jpg"}
-                  alt={car.carName || "Car Image"}
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                  alt={car.carName || "Car"}
+                  className="car-card-img transition-transform duration-500 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
-                <span className="absolute top-3 right-3 px-4 py-2 text-xs font-semibold rounded-md bg-primary text-white cursor-pointer">
+
+                {/* Subtle Image Overlay */}
+                <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+
+                {/* Availability Badge */}
+                <span
+                  className={`absolute top-3 left-3 text-xs font-semibold px-2.5 py-1 rounded-lg ${
+                    car.isBooked ? "badge-booked" : "badge-available"
+                  }`}
+                >
                   {car.isBooked ? "Booked" : "Available"}
                 </span>
               </div>
 
-              <div className="p-5 space-y-2">
-                <h3 className="text-xl font-semibold">{car.carName}</h3>
+              {/* Car Details */}
+              <div className="p-5 space-y-3">
+                {/* Car Name */}
+                <h3 className="font-bold text-base-content text-base leading-tight truncate">
+                  {car.carName}
+                </h3>
 
-                <div className="flex items-center justify-between">
-                  <p className="flex items-center gap-1 text-sm font-medium ">
-                    <FaBangladeshiTakaSign className="text-primary text-base" />
-                    {car.rentalFee ? (
+                {/* Car Information */}
+                <div className="flex items-center justify-between text-xs text-base-content/55">
+                  <div className="flex items-center gap-1.5">
+                    <BsFuelPumpDiesel className="text-primary" />
+                    <span>{car.carType || "General"}</span>
+                  </div>
+
+                  <div className="flex items-center gap-1">
+                    <FaLocationDot className="text-primary" />
+                    <span className="max-w-20 truncate">{car.location}</span>
+                  </div>
+                </div>
+
+                {/* Rental Fee and Rider Information */}
+                <div className="flex items-center justify-between pt-3 border-t border-base-200">
+                  <div className="flex items-center gap-1 font-bold text-base-content">
+                    {car.rentalFee > 0 ? (
                       <>
-                        <span>{car.rentalFee}</span>
-                        <span className="text-gray-500 text-xs ml-1">
-                          / day
+                        <FaBangladeshiTakaSign className="text-primary text-sm" />
+
+                        <span className="text-lg">{car.rentalFee}</span>
+
+                        <span className="text-xs text-base-content/40 font-normal ml-0.5">
+                          /day
                         </span>
                       </>
                     ) : (
-                      <span className="text-gray-400">N/A</span>
+                      <span className="text-sm font-semibold text-emerald-600">
+                        Free
+                      </span>
                     )}
-                  </p>
+                  </div>
 
-                  {/* Fuel Type */}
-                  <p className="flex items-center gap-1 text-sm font-medium">
-                    <BsFuelPumpDiesel className="text-primary text-base" />
-                    <span>{car.carType || "General"}</span>
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  {/* Rider Name */}
                   {car.riderName && (
-                    <p className="flex items-center gap-1 text-sm font-medium ">
-                      <FaUser className="text-primary text-base" />
-                      <span>{car.riderName}</span>
-                    </p>
+                    <div className="flex items-center gap-1 text-xs text-base-content/45">
+                      <FaUser className="text-primary/60" />
+                      <span className="max-w-16 truncate">{car.riderName}</span>
+                    </div>
                   )}
-
-                  {/* Location */}
-                  <p className="flex items-center gap-1 text-sm font-medium ">
-                    <FaLocationDot className="text-primary text-base" />
-                    <span>{car.location || "Location not specified"}</span>
-                  </p>
                 </div>
 
+                {/* Single CTA */}
                 <Link
                   to={`/cars/${car._id}`}
-                  className="btn btn-primary w-full mt-2"
+                  className="block w-full text-center bg-primary text-primary-content text-sm font-semibold py-2.5 rounded-xl hover:opacity-90 transition-all duration-200 mt-1 shadow-sm hover:shadow-md"
                 >
                   View Details
                 </Link>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
 
-      {/* Pagination */}
+      {/* ── Pagination ── */}
       {!isFeatured && totalPages > 1 && (
-        <div className="flex justify-center mt-8 gap-2 items-center">
-          {/* Prev */}
+        <div className="flex justify-center items-center gap-2 mt-12">
           <button
             onClick={() => goToPage(currentPage - 1)}
             disabled={currentPage === 1}
-            className={`px-4 py-2 border-2 border-base-300 rounded cursor-pointer ${
-              currentPage === 1
-                ? "bg-gray-200 text-gray-500 disabled:cursor-not-allowed"
-                : "bg-white hover:bg-gray-200"
-            }`}
+            className="w-10 h-10 rounded-xl border border-base-300 flex items-center justify-center text-base-content/60 hover:bg-base-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
           >
-            Prev
+            <FaChevronLeft size={13} />
           </button>
 
-          {/* Page numbers */}
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i + 1}
-              onClick={() => goToPage(i + 1)}
-              className={`px-4 py-2 border-2 border-base-300 rounded cursor-pointer ${
-                currentPage === i + 1
-                  ? "bg-primary text-white"
-                  : "bg-white hover:bg-gray-200"
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
+          {Array.from({ length: totalPages }, (_, i) => {
+            const page = i + 1;
+            const isActive = page === currentPage;
+            // Show limited range
+            if (
+              page === 1 ||
+              page === totalPages ||
+              (page >= currentPage - 1 && page <= currentPage + 1)
+            ) {
+              return (
+                <button
+                  key={page}
+                  onClick={() => goToPage(page)}
+                  className={`w-10 h-10 rounded-xl text-sm font-semibold transition-all ${
+                    isActive
+                      ? "bg-primary text-primary-content shadow-sm"
+                      : "border border-base-300 text-base-content/60 hover:bg-base-200"
+                  }`}
+                >
+                  {page}
+                </button>
+              );
+            }
+            if (page === currentPage - 2 || page === currentPage + 2) {
+              return (
+                <span
+                  key={page}
+                  className="w-10 h-10 flex items-center justify-center text-base-content/30 text-sm"
+                >
+                  …
+                </span>
+              );
+            }
+            return null;
+          })}
 
-          {/* Next */}
           <button
             onClick={() => goToPage(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className={`px-4 py-2 border-2 border-base-300 rounded cursor-pointer ${
-              currentPage === totalPages
-                ? "bg-gray-200 text-gray-500 disabled:cursor-not-allowed"
-                : "bg-white hover:bg-gray-200"
-            }`}
+            className="w-10 h-10 rounded-xl border border-base-300 flex items-center justify-center text-base-content/60 hover:bg-base-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
           >
-            Next
+            <FaChevronRight size={13} />
           </button>
         </div>
       )}
 
-      {/* Featured "View All" */}
-      {isFeatured && (
-        <div className="text-center mt-8">
-          <Link to="/cars" className="btn btn-primary">
+      {/* ── Featured "View All" ── */}
+      {isFeatured && filteredCars.length > 8 && (
+        <div className="text-center mt-10">
+          <Link
+            to="/cars"
+            className="inline-flex items-center gap-2 bg-primary text-primary-content font-semibold px-8 py-3 rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md"
+          >
             View All Cars
+            <FaArrowRight size={13} />
           </Link>
         </div>
       )}

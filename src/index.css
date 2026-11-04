@@ -1,26 +1,251 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: light, dark;
+}
 
-/* @plugin "daisyui/theme" {
+@plugin "daisyui/theme" {
   name: "light";
   default: true;
-  --color-primary: #feac00;
-  --color-secondary: #333;
+
+  --color-primary: #e85d04;
+  --color-primary-content: #ffffff;
+  --color-secondary: #1a1a2e;
+  --color-secondary-content: #ffffff;
+  --color-accent: #f48c06;
+  --color-accent-content: #1a1a2e;
+  --color-neutral: #1a1a2e;
+  --color-neutral-content: #ffffff;
+  --color-base-100: #ffffff;
+  --color-base-200: #f8f9fc;
+  --color-base-300: #eef0f4;
+  --color-base-content: #1a1a2e;
+
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.75rem;
+  --border: 1px;
+}
+
+@plugin "daisyui/theme" {
+  name: "dark";
+
+  --color-primary: #f48c06;
+  --color-primary-content: #1a1a2e;
+  --color-secondary: #e85d04;
+  --color-secondary-content: #ffffff;
+  --color-accent: #fb923c;
+  --color-accent-content: #1a1a2e;
+  --color-neutral: #2a2a3e;
+  --color-neutral-content: #e2e8f0;
+  --color-base-100: #0f0f1a;
+  --color-base-200: #1a1a2e;
+  --color-base-300: #252540;
+  --color-base-content: #e2e8f0;
+
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.75rem;
+  --border: 1px;
+}
+
+/* ───────────────────────────────────────────
+   Base resets
+─────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+button {
+  cursor: pointer;
+}
+/* ───────────────────────────────────────────
+   Typography
+─────────────────────────────────────────── */
+body {
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ───────────────────────────────────────────
+   Navbar active link
+─────────────────────────────────────────── */
+.primary-menu a {
+  @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+}
+
+/* .primary-menu a.active {
+  @apply bg-primary text-white font-semibold;
 } */
 
-button:disabled {
-  @apply bg-primary text-white;
-}
+/* .primary-menu a:not(.active):hover {
+  @apply bg-base-200;
+} */
 
-/* wheelzy CSS */
-.primary-menu a {
-  @apply px-4 py-2 rounded;
-}
-
-.primary-menu a.active {
-  @apply bg-primary text-white font-semibold;
+/* ───────────────────────────────────────────
+   Dashboard sidebar active link
+─────────────────────────────────────────── */
+.dashboard-sidebar li a {
+  @apply transition-all duration-200 rounded-xl;
 }
 
 .dashboard-sidebar li a.active {
-  @apply bg-primary text-white;
+  @apply bg-primary text-white font-semibold shadow-sm;
+}
+
+.dashboard-sidebar li a:not(.active):hover {
+  @apply bg-base-300;
+}
+
+/* ───────────────────────────────────────────
+   Stat cards (custom premium style)
+─────────────────────────────────────────── */
+.stat-card {
+  @apply bg-base-100 rounded-2xl p-6 shadow-sm border border-base-300 flex items-center gap-5 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5;
+}
+
+.stat-card-icon {
+  @apply w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0;
+}
+
+/* ───────────────────────────────────────────
+   Car card
+─────────────────────────────────────────── */
+.car-card {
+  @apply bg-base-100 rounded-2xl overflow-hidden shadow-sm border border-base-300 transition-all duration-300;
+}
+
+.car-card:hover {
+  @apply shadow-xl -translate-y-1;
+}
+
+.car-card:hover .car-card-img {
+  @apply scale-105;
+}
+
+.car-card-img {
+  @apply w-full h-full object-cover transition-transform duration-500;
+}
+
+/* ───────────────────────────────────────────
+   Form inputs — refined focus ring
+─────────────────────────────────────────── */
+.input:focus,
+.textarea:focus,
+.select:focus {
+  @apply outline-none ring-2 ring-primary/30 border-primary;
+}
+
+/* ───────────────────────────────────────────
+   Buttons
+─────────────────────────────────────────── */
+.btn-primary:not(:disabled) {
+  @apply transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0;
+}
+
+button:disabled {
+  @apply opacity-60 cursor-not-allowed;
+}
+
+/* ───────────────────────────────────────────
+   Page section spacing
+─────────────────────────────────────────── */
+.section-padding {
+  @apply py-20 px-4;
+}
+
+/* ───────────────────────────────────────────
+   Table enhancements
+─────────────────────────────────────────── */
+.premium-table thead tr th {
+  @apply bg-base-200 text-base-content/70 text-xs font-semibold uppercase tracking-wider py-3 px-4;
+}
+
+.premium-table tbody tr {
+  @apply border-b border-base-200 transition-colors duration-150;
+}
+
+.premium-table tbody tr:hover {
+  @apply bg-primary/5;
+}
+
+.premium-table tbody tr td {
+  @apply py-3 px-4 text-sm;
+}
+
+/* ───────────────────────────────────────────
+   Badge variants
+─────────────────────────────────────────── */
+.badge-approved {
+  @apply bg-emerald-100 text-emerald-700 border border-emerald-200;
+}
+
+.badge-pending {
+  @apply bg-amber-100 text-amber-700 border border-amber-200;
+}
+
+.badge-rejected {
+  @apply bg-red-100 text-red-700 border border-red-200;
+}
+
+.badge-available {
+  @apply bg-emerald-100 text-emerald-700;
+}
+
+.badge-booked {
+  @apply bg-rose-100 text-rose-700;
+}
+
+/* ───────────────────────────────────────────
+   Sidebar collapse transition
+─────────────────────────────────────────── */
+.sidebar-nav-text {
+  @apply overflow-hidden transition-all duration-300;
+}
+
+/* ───────────────────────────────────────────
+   Scroll bar (webkit)
+─────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-base-200;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-base-300 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary/40;
+}
+
+/* ───────────────────────────────────────────
+   Gradient text utility
+─────────────────────────────────────────── */
+.text-gradient {
+  background: linear-gradient(135deg, #e85d04, #f48c06);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ───────────────────────────────────────────
+   Glass card utility (subtle)
+─────────────────────────────────────────── */
+.glass-card {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }

@@ -1,20 +1,27 @@
-// src/pages/dashboard/UserBookings.jsx
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
-import { FaEye, FaTrash, FaSearch } from "react-icons/fa";
+import { FaEye, FaTrash, FaSearch, FaCar } from "react-icons/fa";
 import Swal from "sweetalert2";
-import { Link } from "react-router-dom";
 import Loader from "../../components/Loader";
 import { FaBangladeshiTakaSign } from "react-icons/fa6";
+
+const statusBadge = {
+  active:
+    "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400",
+  cancelled: "bg-red-100 text-red-700 dark:bg-red-950/30 dark:text-red-400",
+  pending:
+    "bg-amber-100 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400",
+};
 
 const MyCars = () => {
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
   const [searchText, setSearchText] = useState("");
 
-  // Fetch user's active bookings
   const {
     data: bookings = [],
     isLoading,
@@ -22,157 +29,187 @@ const MyCars = () => {
   } = useQuery({
     queryKey: ["userBookings", user?.email],
     queryFn: async () => {
-      const res = await axiosSecure.get("/memberships/active"); // Backend API
+      const res = await axiosSecure.get("/memberships/active");
       return res.data;
     },
     enabled: !!user?.email,
   });
 
-  // Cancel booking
   const handleCancelBooking = (bookingId, carName) => {
     Swal.fire({
-      title: `Cancel booking for ${carName}?`,
-      text: "This will cancel your current booking. This action cannot be undone!",
+      title: "Cancel Booking?",
+      text: `Cancel your booking for "${carName}"? This cannot be undone.`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yes, Cancel Booking",
-      cancelButtonText: "No, Keep it",
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Cancel Booking",
+      cancelButtonText: "Keep it",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
           const res = await axiosSecure.patch(
-            `/memberships/cancel/${bookingId}`
+            `/memberships/cancel/${bookingId}`,
           );
           if (res.data.modifiedCount > 0) {
             refetch();
-            Swal.fire(
-              "Cancelled!",
-              `Your booking for ${carName} has been cancelled.`,
-              "success"
-            );
+            Swal.fire({
+              icon: "success",
+              title: "Booking cancelled",
+              timer: 1500,
+              showConfirmButton: false,
+            });
           } else {
             Swal.fire(
               "Failed",
               res.data.message || "Could not cancel booking",
-              "error"
+              "error",
             );
           }
-        } catch (err) {
-          Swal.fire(
-            "Error",
-            "Server error occurred while cancelling booking",
-            "error"
-          );
+        } catch {
+          Swal.fire("Error", "Server error occurred", "error");
         }
       }
     });
   };
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <Loader fullScreen={false} />;
 
-  if (bookings.length === 0)
-    return (
-      <div className="text-center py-20">
-        <h3 className="text-xl font-semibold text-gray-700">
-          You have no active bookings.
-        </h3>
-        <p className="text-gray-500 mt-2">
-          Browse available cars on the{" "}
-          <Link to="/cars" className="text-primary hover:underline font-medium">
-            Cars Page
-          </Link>{" "}
-          to make a booking!
-        </p>
-      </div>
-    );
-
-  // Filter by search
   const filteredBookings = bookings.filter((b) =>
-    b.carName.toLowerCase().includes(searchText.toLowerCase())
+    b.carName.toLowerCase().includes(searchText.toLowerCase()),
   );
 
-  return (
-    <div className="container mx-auto py-10">
-      {/* Heading + Search */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-        <h2 className="text-2xl text-primary font-bold">My Active Bookings</h2>
+  if (bookings.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <div className="w-16 h-16 bg-base-200 rounded-2xl flex items-center justify-center mb-4">
+          <FaCar className="text-base-content/30" size={26} />
+        </div>
+        <p className="font-bold text-base-content text-lg mb-1">
+          No active bookings
+        </p>
+        <p className="text-sm text-base-content/50 mb-6">
+          Browse available cars and make your first booking.
+        </p>
+        <Link
+          to="/cars"
+          className="bg-primary text-primary-content font-semibold px-6 py-2.5 rounded-xl text-sm hover:opacity-90 transition-all"
+        >
+          Browse Cars
+        </Link>
+      </div>
+    );
+  }
 
-        <div className="w-full md:w-80">
-          <div className="input input-bordered flex items-center gap-2">
-            <FaSearch className="text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search cars..."
-              className="grow"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-            />
-          </div>
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-base-content">My Bookings</h2>
+          <p className="text-sm text-base-content/50 mt-0.5">
+            {filteredBookings.length} active bookings
+          </p>
+        </div>
+
+        <div className="relative w-full sm:w-72">
+          <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base-content/30 text-sm pointer-events-none" />
+          <input
+            type="text"
+            placeholder="Search bookings..."
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="w-full h-10 pl-10 pr-4 bg-base-100 border border-base-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+          />
         </div>
       </div>
 
-      {/* Bookings Table */}
-      <div className="overflow-x-auto rounded-lg shadow">
-        <table className="table table-zebra">
-          <thead className="bg-base-200">
-            <tr>
-              <th>Index</th>
-              <th>Car Name</th>
-              <th>Fee Paid</th>
-              <th>Booked On</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filteredBookings.length > 0 ? (
-              filteredBookings.map((booking, index) => (
-                <tr key={booking._id}>
-                  <th>{index + 1}</th>
-                  <td>{booking.carName}</td>
-                  <td>
-                    {booking.membershipFee === 0 ? (
-                      "Free"
-                    ) : (
-                      <div className="flex items-center gap-1">
-                        <FaBangladeshiTakaSign />
-                        {booking.membershipFee}
+      {/* Table */}
+      <div className="bg-base-100 rounded-2xl border border-base-300 overflow-hidden shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="premium-table w-full">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Car Name</th>
+                <th>Fee Paid</th>
+                <th>Booked On</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredBookings.length > 0 ? (
+                filteredBookings.map((booking, index) => (
+                  <tr key={booking._id}>
+                    <td className="text-base-content/40 font-medium">
+                      {index + 1}
+                    </td>
+                    <td className="font-semibold text-base-content">
+                      {booking.carName}
+                    </td>
+                    <td>
+                      {booking.membershipFee === 0 ? (
+                        <span className="text-emerald-600 font-semibold text-xs">
+                          Free
+                        </span>
+                      ) : (
+                        <div className="flex items-center gap-0.5 font-semibold text-base-content">
+                          <FaBangladeshiTakaSign className="text-xs text-primary" />
+                          <span className="text-sm">
+                            {booking.membershipFee}
+                          </span>
+                        </div>
+                      )}
+                    </td>
+                    <td className="text-base-content/50 text-xs">
+                      {new Date(booking.purchaseDate).toLocaleDateString()}
+                    </td>
+                    <td>
+                      <span
+                        className={`text-xs font-semibold px-2.5 py-1 rounded-lg capitalize ${
+                          statusBadge[booking.status] ||
+                          "bg-base-200 text-base-content/60"
+                        }`}
+                      >
+                        {booking.status}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="flex items-center gap-1.5">
+                        <Link
+                          to={`/cars/${booking.carId}`}
+                          className="w-8 h-8 rounded-lg bg-base-200 hover:bg-primary hover:text-white flex items-center justify-center transition-all text-base-content/60"
+                          title="View car"
+                        >
+                          <FaEye size={12} />
+                        </Link>
+                        <button
+                          onClick={() =>
+                            handleCancelBooking(booking._id, booking.carName)
+                          }
+                          className="w-8 h-8 rounded-lg bg-base-200 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-950/30 flex items-center justify-center transition-all text-base-content/60"
+                          title="Cancel booking"
+                        >
+                          <FaTrash size={12} />
+                        </button>
                       </div>
-                    )}
-                  </td>
-                  <td>{new Date(booking.purchaseDate).toLocaleDateString()}</td>
-                  <td className="capitalize">{booking.status}</td>
-                  <td className="space-x-2">
-                    <Link
-                      to={`/cars/${booking.carId}`}
-                      className="btn btn-square hover:bg-primary hover:text-white"
-                      title="View Car Details"
-                    >
-                      <FaEye />
-                    </Link>
-
-                    <button
-                      onClick={() =>
-                        handleCancelBooking(booking._id, booking.carName)
-                      }
-                      className="btn btn-square hover:btn-error hover:text-white"
-                      title="Cancel Booking"
-                    >
-                      <FaTrash />
-                    </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="py-12 text-center text-base-content/40 text-sm"
+                  >
+                    No bookings match your search.
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="6" className="text-center py-6 text-gray-500">
-                  No matching bookings found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

@@ -1,24 +1,30 @@
 import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
-import { FaEye, FaCheck, FaTimes, FaSearch } from "react-icons/fa";
+import {
+  FaEye,
+  FaCheck,
+  FaTimes,
+  FaSearch,
+  FaHourglassHalf,
+} from "react-icons/fa";
+import { FaBangladeshiTakaSign } from "react-icons/fa6";
 import Loader from "../../components/Loader";
 
 const WaitingForApproval = () => {
-  const axiosSecure = useAxiosSecure(); // Ensure this sends Firebase token
+  const axiosSecure = useAxiosSecure();
   const [pendingCars, setPendingCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState(null);
   const [searchText, setSearchText] = useState("");
 
-  // ---------------- FETCH PENDING CARS ----------------
   const fetchPendingData = async () => {
     setLoading(true);
     try {
       const res = await axiosSecure.get("/cars?status=pending");
       setPendingCars(res.data);
-    } catch (err) {
-      console.error("Fetch pending cars error:", err.response?.data || err);
+    } catch {
       Swal.fire("Error", "Failed to fetch pending cars", "error");
     } finally {
       setLoading(false);
@@ -29,176 +35,230 @@ const WaitingForApproval = () => {
     fetchPendingData();
   }, []);
 
-  // ---------------- APPROVE / REJECT CAR ----------------
   const updateCarStatus = async (carId, status) => {
-    if (!["approved", "rejected"].includes(status)) return;
-
     try {
-      const res = await axiosSecure.patch(`/cars/${carId}/status`, { status });
-      console.log("PATCH response:", res.data);
-
-      Swal.fire(
-        "Success",
-        `Car ${status === "approved" ? "approved" : "rejected"} successfully`,
-        "success"
-      );
-
-      // ✅ Pending list refresh
+      await axiosSecure.patch(`/cars/${carId}/status`, { status });
+      Swal.fire({
+        icon: "success",
+        title: `Car ${status}!`,
+        timer: 1500,
+        showConfirmButton: false,
+      });
       setPendingCars((prev) => prev.filter((car) => car._id !== carId));
       setSelectedItem(null);
     } catch (err) {
-      console.error("PATCH error:", err.response?.data || err);
-      Swal.fire(
-        "Error",
-        err.response?.data?.message || "Failed to update car status",
-        "error"
-      );
+      Swal.fire("Error", err.response?.data?.message || "Failed", "error");
     }
   };
 
   const filteredCars = pendingCars.filter(
     (car) =>
       car.carName.toLowerCase().includes(searchText.toLowerCase()) ||
-      car.riderEmail.toLowerCase().includes(searchText.toLowerCase())
+      car.riderEmail.toLowerCase().includes(searchText.toLowerCase()),
   );
 
-  if (loading) return <Loader />;
+  if (loading) return <Loader fullScreen={false} />;
 
   return (
-    <div className="py-10 container mx-auto">
-      {/* Header + Search */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-        <h2 className="text-2xl font-bold text-primary">
-          Pending Car Approval
-        </h2>
-        <div className="w-full md:w-80">
-          <div className="input input-bordered flex items-center gap-2">
-            <FaSearch className="text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search Here..."
-              className="grow"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-            />
-          </div>
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-base-content">
+            Pending Car Approval
+          </h2>
+          <p className="text-sm text-base-content/50 mt-0.5">
+            {filteredCars.length} awaiting review
+          </p>
+        </div>
+        <div className="relative w-full sm:w-72">
+          <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base-content/30 text-sm pointer-events-none" />
+          <input
+            type="text"
+            placeholder="Search by car or rider..."
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="w-full h-10 pl-10 pr-4 bg-base-100 border border-base-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+          />
         </div>
       </div>
 
-      {/* Table or No Data */}
       {filteredCars.length === 0 ? (
-        <p className="text-center pt-30 text-2xl text-error font-bold">
-          No pending cars
-        </p>
-      ) : (
-        <div className="overflow-x-auto shadow rounded-lg">
-          <table className="table table-zebra  w-full">
-            <thead className="bg-base-200">
-              <tr>
-                <th>Index</th>
-                <th>Name</th>
-                <th>Rider Email</th>
-                <th>Date Added</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredCars.map((car, i) => (
-                <tr key={car._id}>
-                  <td>{i + 1}</td>
-                  <td>{car.carName}</td>
-                  <td>{car.riderEmail}</td>
-                  <td>{new Date(car.createdAt).toLocaleDateString()}</td>
-                  <td className="flex gap-2">
-                    <button
-                      onClick={() => setSelectedItem(car)}
-                      className="btn btn-square hover:btn-primary flex items-center gap-1"
-                    >
-                      <FaEye />
-                    </button>
-                    <button
-                      onClick={() => updateCarStatus(car._id, "approved")}
-                      className="btn btn-square hover:btn-success flex items-center gap-1"
-                    >
-                      <FaCheck />
-                    </button>
-                    <button
-                      onClick={() => updateCarStatus(car._id, "rejected")}
-                      className="btn btn-square hover:btn-error flex items-center gap-1"
-                    >
-                      <FaTimes />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="flex flex-col items-center justify-center py-24 text-center bg-base-100 rounded-2xl border border-base-300">
+          <div className="w-16 h-16 bg-base-200 rounded-2xl flex items-center justify-center mb-4">
+            <FaHourglassHalf className="text-base-content/30" size={22} />
+          </div>
+          <p className="font-medium text-base-content">No pending cars</p>
+          <p className="text-sm text-base-content/40 mt-1">
+            All listings have been reviewed.
+          </p>
         </div>
-      )}
-
-      {/* Modal */}
-      {selectedItem && (
-        <div className="fixed inset-0 flex justify-center items-center z-50">
-          <div
-            className="absolute inset-0 bg-black bg-opacity-30"
-            onClick={() => setSelectedItem(null)}
-          ></div>
-
-          <div className="relative bg-white rounded-lg w-11/12 md:w-2/3 lg:w-1/2 max-h-[90vh] overflow-y-auto p-6 z-10 shadow-lg">
-            {selectedItem.bannerImage && (
-              <img
-                src={selectedItem.bannerImage}
-                alt={selectedItem.carName}
-                className="w-full h-96 object-cover rounded mb-4"
-              />
-            )}
-            <h3 className="text-2xl font-bold mb-2">{selectedItem.carName}</h3>
-            {selectedItem.description && (
-              <p className="mb-2">
-                <strong>Description:</strong> {selectedItem.description}
-              </p>
-            )}
-            {selectedItem.carType && (
-              <p className="mb-2">
-                <strong>Car Type:</strong> {selectedItem.carType}
-              </p>
-            )}
-            {selectedItem.location && (
-              <p className="mb-2">
-                <strong>Location:</strong> {selectedItem.location}
-              </p>
-            )}
-            {selectedItem.rentalFee !== undefined && (
-              <p className="mb-2">
-                <strong>Rental Fee:</strong> BDT {selectedItem.rentalFee}
-              </p>
-            )}
-            <p className="mb-2 capitalize">
-              <strong>Status:</strong> {selectedItem.status}
-            </p>
-            <p className="mb-2">
-              <strong>Rider Email:</strong> {selectedItem.riderEmail}
-            </p>
-            <p className="mb-2">
-              <strong>Created At:</strong>{" "}
-              {new Date(selectedItem.createdAt).toLocaleString()}
-            </p>
-            <p className="mb-2">
-              <strong>Updated At:</strong>{" "}
-              {new Date(selectedItem.updatedAt).toLocaleString()}
-            </p>
-
-            <div className="mt-4 flex justify-end">
-              <button
-                className="btn btn-primary"
-                onClick={() => setSelectedItem(null)}
-              >
-                Close
-              </button>
-            </div>
+      ) : (
+        <div className="bg-base-100 rounded-2xl border border-base-300 overflow-hidden shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="premium-table w-full">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Car</th>
+                  <th>Rider Email</th>
+                  <th>Date Added</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredCars.map((car, i) => (
+                  <tr key={car._id}>
+                    <td className="text-base-content/40">{i + 1}</td>
+                    <td>
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-9 rounded-lg overflow-hidden bg-base-200 flex-shrink-0">
+                          {car.bannerImage && (
+                            <img
+                              src={car.bannerImage}
+                              alt={car.carName}
+                              className="w-full h-full object-cover"
+                            />
+                          )}
+                        </div>
+                        <span className="font-semibold text-base-content">
+                          {car.carName}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="text-base-content/60">{car.riderEmail}</td>
+                    <td className="text-base-content/40 text-xs">
+                      {new Date(car.createdAt).toLocaleDateString()}
+                    </td>
+                    <td>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => setSelectedItem(car)}
+                          className="w-8 h-8 rounded-lg bg-base-200 hover:bg-primary hover:text-white flex items-center justify-center transition-all text-base-content/60"
+                          title="View details"
+                        >
+                          <FaEye size={12} />
+                        </button>
+                        <button
+                          onClick={() => updateCarStatus(car._id, "approved")}
+                          className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 dark:bg-emerald-950/30 flex items-center justify-center transition-all"
+                          title="Approve"
+                        >
+                          <FaCheck size={12} />
+                        </button>
+                        <button
+                          onClick={() => updateCarStatus(car._id, "rejected")}
+                          className="w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-950/30 flex items-center justify-center transition-all"
+                          title="Reject"
+                        >
+                          <FaTimes size={12} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
+
+      {/* Car detail modal */}
+      <AnimatePresence>
+        {selectedItem && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-40"
+              onClick={() => setSelectedItem(null)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
+            >
+              <div
+                className="bg-base-100 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden pointer-events-auto border border-base-300 max-h-[90vh] overflow-y-auto"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {selectedItem.bannerImage && (
+                  <div className="relative h-48 bg-base-200">
+                    <img
+                      src={selectedItem.bannerImage}
+                      alt={selectedItem.carName}
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      onClick={() => setSelectedItem(null)}
+                      className="absolute top-3 right-3 w-8 h-8 bg-black/40 rounded-lg flex items-center justify-center text-white hover:bg-black/60 transition-all"
+                    >
+                      <FaTimes size={13} />
+                    </button>
+                  </div>
+                )}
+                <div className="p-5 space-y-3">
+                  <h3 className="font-bold text-base-content text-lg">
+                    {selectedItem.carName}
+                  </h3>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    {[
+                      { label: "Type", value: selectedItem.carType },
+                      { label: "Location", value: selectedItem.location },
+                      {
+                        label: "Rental Fee",
+                        value: selectedItem.rentalFee
+                          ? `৳ ${selectedItem.rentalFee} / day`
+                          : "Free",
+                      },
+                      { label: "Rider", value: selectedItem.riderEmail },
+                    ].map(({ label, value }) => (
+                      <div key={label} className="bg-base-200 rounded-xl p-3">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-base-content/40 mb-0.5">
+                          {label}
+                        </p>
+                        <p className="text-sm font-semibold text-base-content truncate">
+                          {value}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                  {selectedItem.description && (
+                    <div className="bg-base-200 rounded-xl p-3">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-base-content/40 mb-1">
+                        Description
+                      </p>
+                      <p className="text-sm text-base-content/70 leading-relaxed">
+                        {selectedItem.description}
+                      </p>
+                    </div>
+                  )}
+                  <div className="flex gap-2 pt-1">
+                    <button
+                      onClick={() =>
+                        updateCarStatus(selectedItem._id, "approved")
+                      }
+                      className="flex-1 h-10 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all"
+                    >
+                      <FaCheck size={12} /> Approve
+                    </button>
+                    <button
+                      onClick={() =>
+                        updateCarStatus(selectedItem._id, "rejected")
+                      }
+                      className="flex-1 h-10 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all"
+                    >
+                      <FaTimes size={12} /> Reject
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

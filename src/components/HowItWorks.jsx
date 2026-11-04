@@ -1,66 +1,108 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { FaSearch, FaCarAlt, FaRoad } from "react-icons/fa";
 
 const steps = [
   {
     step: "01",
-    title: "Discover Clubs",
+    icon: <FaSearch className="text-primary" size={24} />,
+    title: "Find Your Car",
     description:
-      "Explore a wide range of clubs based on your interests, location, and activities.",
+      "Browse our curated selection of verified vehicles by location, type, and price. Filter to find exactly what fits your journey.",
   },
   {
     step: "02",
-    title: "Join Easily",
+    icon: <FaCarAlt className="text-primary" size={24} />,
+    title: "Book Instantly",
     description:
-      "Become a member with a simple signup process and secure payments.",
+      "Choose your car and complete a secure, hassle-free booking in minutes. No hidden fees — transparent pricing always.",
   },
   {
     step: "03",
-    title: "Engage & Grow",
+    icon: <FaRoad className="text-primary" size={24} />,
+    title: "Drive & Enjoy",
     description:
-      "Attend events, connect with members, and grow your community experience.",
+      "Pick up your verified vehicle and hit the road with confidence. Track your rental history any time from your dashboard.",
   },
 ];
 
+const containerVariants = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 40 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } },
+};
+
 const HowItWorks = () => {
   return (
-    <section className="bg-base-200 pt-20">
-      <div className="container mx-auto">
-        {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <h2 className="text-4xl font-bold mb-4">
-            How <span className="text-primary">wheelzy</span> Works
+    <section className="py-20 bg-base-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-2xl mx-auto mb-16"
+        >
+          <span className="inline-block text-xs font-bold uppercase tracking-widest text-primary mb-3">
+            Simple Process
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-base-content mb-4">
+            How <span className="text-primary">Wheelzy</span> Works
           </h2>
-          <p className="text-base-content/70">
-            Getting started is simple. Follow these steps to become part of an
-            active club community.
+          <p className="text-base-content/60 leading-relaxed">
+            Getting behind the wheel has never been easier. Three simple steps
+            to your next adventure.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Steps */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Steps grid */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 relative"
+        >
+          {/* Connector line (desktop) */}
+          <div className="hidden md:block absolute top-12 left-1/4 right-1/4 h-px bg-gradient-to-r from-primary/30 via-primary/60 to-primary/30 z-0" />
+
           {steps.map((step, idx) => (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: idx * 0.15 }}
-              whileHover={{ y: -6 }}
-              className="bg-base-100 rounded-2xl p-8 shadow-md hover:shadow-xl transition-all"
+              variants={cardVariants}
+              whileHover={{ y: -6, transition: { duration: 0.2 } }}
+              className="relative z-10 bg-base-100 rounded-2xl p-8 shadow-sm border border-base-300 hover:shadow-lg hover:border-primary/20 transition-all duration-300"
             >
-              {/* Step Number */}
-              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-primary text-primary-content font-bold mb-6">
-                {step.step}
+              {/* Step number */}
+              <div className="absolute -top-4 left-6">
+                <span className="bg-primary text-primary-content text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                  {step.step}
+                </span>
               </div>
 
-              <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
-              <p className="text-base-content/70 leading-relaxed">
+              {/* Icon */}
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-5 mt-3">
+                {step.icon}
+              </div>
+
+              <h3 className="text-lg font-bold text-base-content mb-3">
+                {step.title}
+              </h3>
+              <p className="text-sm text-base-content/60 leading-relaxed">
                 {step.description}
               </p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -62,18 +62,18 @@ export const router = createBrowserRouter([
         path: "contact",
         Component: ContactUs,
       },
-      {
-        path: "login",
-        Component: Login,
-      },
-      {
-        path: "register",
-        Component: Register,
-      },
-      {
-        path: "forgot-password",
-        Component: ForgotPassword,
-      },
+      // {
+      //   path: "login",
+      //   Component: Login,
+      // },
+      // {
+      //   path: "register",
+      //   Component: Register,
+      // },
+      // {
+      //   path: "forgot-password",
+      //   Component: ForgotPassword,
+      // },
       {
         path: "be-a-rider",
         element: (
@@ -207,6 +207,18 @@ export const router = createBrowserRouter([
         Component: PaymentHistory,
       },
     ],
+  },
+  {
+    path: "login",
+    Component: Login,
+  },
+  {
+    path: "register",
+    Component: Register,
+  },
+  {
+    path: "forgot-password",
+    Component: ForgotPassword,
   },
   {
     path: "*",

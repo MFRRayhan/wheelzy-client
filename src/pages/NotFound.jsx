@@ -1,47 +1,57 @@
-// pages/NotFound.jsx
 import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router";
+import { FaHome, FaArrowRight } from "react-icons/fa";
 
 const NotFound = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4 text-center">
-      {/* Animated 404 Number */}
-      <motion.h1
-        initial={{ scale: 0 }}
-        animate={{ rotate: 360, scale: 1 }}
-        transition={{ type: "spring", stiffness: 260, damping: 20 }}
-        className="text-9xl font-extrabold text-primary mb-6"
-      >
-        404
-      </motion.h1>
-
-      {/* Animated Message */}
-      <motion.p
-        initial={{ opacity: 0, y: 50 }}
+    <div className="min-h-screen bg-base-100 flex flex-col items-center justify-center px-4 py-20 text-center">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.8 }}
-        className="text-2xl md:text-3xl font-semibold mb-4 text-gray-700"
+        transition={{ duration: 0.5 }}
+        className="max-w-md"
       >
-        Oops! Page Not Found
-      </motion.p>
+        {/* Animated number */}
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="mb-6"
+        >
+          <span className="text-[8rem] font-extrabold leading-none text-gradient">
+            404
+          </span>
+        </motion.div>
 
-      {/* Subtext */}
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8, duration: 1 }}
-        className="text-gray-500 mb-6"
-      >
-        The page you are looking for might have been removed, had its name
-        changed, or is temporarily unavailable.
-      </motion.p>
+        <h1 className="text-2xl font-extrabold text-base-content mb-3">
+          Page not found
+        </h1>
+        <p className="text-base-content/50 text-sm leading-relaxed mb-8">
+          The page you're looking for has been removed, renamed, or is
+          temporarily unavailable.
+        </p>
 
-      {/* Back Home Button */}
-      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-        <Link to="/" className="btn btn-primary px-6 py-3 font-semibold">
-          Go Back Home
-        </Link>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Link
+              to="/"
+              className="flex items-center justify-center gap-2 bg-primary text-primary-content font-semibold px-7 py-3 rounded-xl hover:opacity-90 transition-all shadow-sm hover:shadow-md"
+            >
+              <FaHome size={14} />
+              Back to Home
+            </Link>
+          </motion.div>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Link
+              to="/cars"
+              className="flex items-center justify-center gap-2 border border-base-300 text-base-content font-medium px-7 py-3 rounded-xl hover:bg-base-200 transition-all"
+            >
+              Browse Cars
+              <FaArrowRight size={12} />
+            </Link>
+          </motion.div>
+        </div>
       </motion.div>
     </div>
   );

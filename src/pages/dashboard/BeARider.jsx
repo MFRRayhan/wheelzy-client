@@ -119,7 +119,7 @@ const BeARider = () => {
     <section className="min-h-screen bg-base-100">
       <div className="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
         {/* LEFT: FORM */}
-        <div className="flex items-center justify-center px-6 py-12">
+        <div className="flex items-center justify-center px-6 py-30">
           <div className="w-full max-w-xl">
             <header className="mb-8">
               <h2 className="text-2xl font-bold text-primary mb-3">
