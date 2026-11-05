@@ -36,7 +36,9 @@ const CarCard = ({ car }) => {
         <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-80" />
 
         {/* Availability Badge */}
-        <span className="absolute left-3 top-3 rounded-lg border border-white/20 bg-base-100/90 px-2.5 py-1 text-[11px] font-bold text-base-content shadow-sm backdrop-blur-md">
+        <span
+          className={`absolute left-3 top-3 rounded-lg border border-white/20 bg-base-100/90 px-2.5 py-1 text-[11px] font-bold text-base-content shadow-sm backdrop-blur-md ${car.isBooked && "bg-red-500 text-white"}`}
+        >
           {car.isBooked ? "Booked" : "Available"}
         </span>
       </div>
