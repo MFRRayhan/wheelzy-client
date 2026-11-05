@@ -25,6 +25,7 @@ import Swal from "sweetalert2";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
 import Loader from "../../components/Loader";
+import SummaryCard from "../../components/SummaryCard";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -50,28 +51,6 @@ const formatCurrency = (amount) => {
 
   return value.toLocaleString("en-BD");
 };
-
-const SummaryCard = ({ title, count, icon: Icon, description }) => (
-  <div className="relative overflow-hidden rounded-2xl border border-base-300 bg-base-100 p-4 sm:p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-    <div className="absolute -right-5 -top-5 h-20 w-20 rounded-full bg-primary/5" />
-
-    <div className="relative flex items-start justify-between gap-3">
-      <div className="min-w-0">
-        <p className="text-xs font-semibold text-base-content/50">{title}</p>
-
-        <p className="mt-2 text-2xl font-bold tracking-tight text-base-content">
-          {count}
-        </p>
-
-        <p className="mt-1 text-[11px] text-base-content/40">{description}</p>
-      </div>
-
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-        <Icon size={17} />
-      </div>
-    </div>
-  </div>
-);
 
 const StatusBadge = ({ status }) => {
   const normalizedStatus = status?.toLowerCase();

@@ -18,6 +18,7 @@ import {
 import { FaBangladeshiTakaSign } from "react-icons/fa6";
 import Swal from "sweetalert2";
 import Loader from "../../components/Loader";
+import SummaryCard from "../../components/SummaryCard";
 
 const statusConfig = {
   active: {
@@ -60,27 +61,6 @@ const formatCurrency = (amount) => {
 
   return value.toLocaleString("en-BD");
 };
-
-const SummaryCard = ({ title, value, icon: Icon, color }) => (
-  <div className="relative overflow-hidden rounded-2xl border border-base-300 bg-base-100 p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-    <div
-      className={`absolute -right-5 -top-5 h-24 w-24 rounded-full opacity-[0.07] ${color}`}
-    />
-
-    <div className="relative flex items-center justify-between">
-      <div>
-        <p className="text-sm font-medium text-base-content/50">{title}</p>
-        <h3 className="mt-2 text-2xl font-bold text-base-content">{value}</h3>
-      </div>
-
-      <div
-        className={`flex h-12 w-12 items-center justify-center rounded-xl ${color} text-white`}
-      >
-        <Icon size={19} />
-      </div>
-    </div>
-  </div>
-);
 
 const ActionButton = ({ icon: Icon, title, onClick, variant = "default" }) => {
   const variants = {
