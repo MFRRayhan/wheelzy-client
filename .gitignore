@@ -37,7 +37,7 @@ carData.json
 *.sw?
 
 # Claude
-.claude/
+.claude
 
 # Firebase
-.firebase/
+.firebase

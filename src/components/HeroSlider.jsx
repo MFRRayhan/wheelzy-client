@@ -61,7 +61,7 @@ const HeroSlider = ({ cars = [] }) => {
 
   return (
     <section
-      className="relative h-screen min-h-[560px] max-h-[820px] overflow-hidden bg-neutral"
+      className="relative h-screen min-h-140 max-h-205 overflow-hidden bg-neutral"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -85,8 +85,8 @@ const HeroSlider = ({ cars = [] }) => {
       </AnimatePresence>
 
       {/* ── Gradient overlay — bottom-heavy for text legibility ── */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-r from-black/80 via-black/50 to-black/20" />
+      <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
 
       {/* ── Content ── */}
       <div className="relative z-10 h-full flex items-center">
@@ -112,7 +112,7 @@ const HeroSlider = ({ cars = [] }) => {
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-4 tracking-tight">
                 Drive the Future
                 <br />
-                <span className="text-gradient">with Wheelzy</span>
+                <span className="text-primary">with Wheelzy</span>
               </h1>
 
               {/* Sub headline */}
@@ -144,7 +144,7 @@ const HeroSlider = ({ cars = [] }) => {
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    className="flex items-center gap-2 bg-primary text-white font-semibold px-7 py-3.5 rounded-xl shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-shadow duration-300"
+                    className="flex items-center gap-2 bg-primary text-white font-semibold px-7 py-2.5 rounded-xl shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-shadow duration-300"
                   >
                     Rent Now
                     <FaArrowRight size={13} />
@@ -154,7 +154,7 @@ const HeroSlider = ({ cars = [] }) => {
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
-                    className="flex items-center gap-2 bg-white/10 border border-white/20 text-white font-semibold px-7 py-3.5 rounded-xl backdrop-blur-sm hover:bg-white/20 transition-all duration-200"
+                    className="flex items-center gap-2 bg-white/10 border border-white/20 text-white font-semibold px-7 py-2.5 rounded-xl backdrop-blur-sm hover:bg-white/20 transition-all duration-200"
                   >
                     View All Cars
                   </motion.button>
@@ -166,7 +166,7 @@ const HeroSlider = ({ cars = [] }) => {
       </div>
 
       {/* ── Prev / Next controls ── */}
-      <div className="absolute right-6 bottom-1/2 translate-y-1/2 z-20 flex flex-col gap-2 hidden lg:flex">
+      <div className="absolute right-6 bottom-1/2 translate-y-1/2 z-20 flex-col gap-2 hidden lg:flex">
         <button
           onClick={prev}
           className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/25 transition-all"

@@ -424,7 +424,7 @@ const CarDetails = () => {
                     whileTap={isAvailable && !isBooking ? { scale: 0.98 } : {}}
                     onClick={handlePayment}
                     disabled={!isAvailable || isBooking}
-                    className={`w-full flex items-center justify-center gap-3 py-4 px-5 rounded-2xl font-bold text-sm transition-all duration-300 ${
+                    className={`w-full flex items-center justify-center gap-3 py-2.5 px-5 rounded-2xl font-bold text-sm transition-all duration-300 ${
                       isAvailable && !isBooking
                         ? "bg-primary text-primary-content shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30"
                         : "bg-base-300 text-base-content/40 cursor-not-allowed"
@@ -579,7 +579,7 @@ const CarDetails = () => {
                   type="button"
                   onClick={handlePayment}
                   disabled={!isAvailable || isBooking}
-                  className={`inline-flex items-center justify-center gap-3 px-7 py-4 rounded-xl text-sm font-bold transition-all duration-300 ${
+                  className={`inline-flex items-center justify-center gap-3 px-7 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
                     isAvailable && !isBooking
                       ? "bg-primary text-primary-content hover:opacity-90 hover:-translate-y-0.5"
                       : "bg-base-300 text-base-content/40 cursor-not-allowed"
