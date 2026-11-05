@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import useAuth from "../hooks/useAuth";
 import useRole from "../hooks/useRole";
@@ -18,6 +18,7 @@ const DEFAULT_AVATAR = "https://i.ibb.co.com/TM9j0Rqd/icon-7797704-640.png";
 const UserDropdown = () => {
   const { user, logout } = useAuth();
   const { role, roleLoading } = useRole();
+  const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -49,6 +50,8 @@ const UserDropdown = () => {
           timer: 2000,
           showConfirmButton: false,
         });
+
+        navigate("/login");
       })
       .catch((err) => {
         Swal.fire({

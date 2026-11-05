@@ -24,6 +24,7 @@ import useRole from "../hooks/useRole";
 import Loader from "../components/Loader";
 import UserDropdown from "../components/UserDropdown";
 import Logo from "../components/Logo";
+import { BsSpeedometer } from "react-icons/bs";
 
 // Sidebar Navigation Item
 const SideNavItem = ({
@@ -145,9 +146,18 @@ const Dashboard = () => {
           <ul className="space-y-1 dashboard-sidebar">
             {/* Original Homepage Link */}
             <SideNavItem
-              to="/dashboard"
+              to="/"
               label="Homepage"
               icon={<IoHomeOutline />}
+              end
+              collapsed={isCollapsed}
+              onNavigate={closeMobileMenu}
+            />
+
+            <SideNavItem
+              to="/dashboard"
+              label="Dashboard"
+              icon={<BsSpeedometer />}
               end
               collapsed={isCollapsed}
               onNavigate={closeMobileMenu}

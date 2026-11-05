@@ -112,16 +112,13 @@ const Avatar = ({ user, size = "normal" }) => {
 const RoleBadge = ({ role }) => {
   const config = roleConfig[role] || {
     label: role || "Unknown",
-    badge: "bg-base-200 text-base-content/60 border-base-300",
     icon: FaUser,
   };
 
   const Icon = config.icon;
 
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[11px] font-bold capitalize ${config.badge}`}
-    >
+    <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-base-300 bg-base-200 text-primary text-[11px] font-bold capitalize">
       <Icon size={10} />
       {config.label}
     </span>
@@ -135,10 +132,10 @@ const ActionButton = ({ title, onClick, children, variant = "default" }) => {
     admin:
       "bg-base-200 text-base-content/60 hover:bg-primary/10 hover:text-primary",
     rider:
-      "bg-base-200 text-base-content/60 hover:bg-amber-500/10 hover:text-amber-600",
-    user: "bg-base-200 text-base-content/60 hover:bg-sky-500/10 hover:text-sky-600",
+      "bg-base-200 text-base-content/60 hover:bg-primary/10 hover:text-primary",
+    user: "bg-base-200 text-base-content/60 hover:bg-primary/10 hover:text-primary",
     delete:
-      "bg-base-200 text-base-content/60 hover:bg-red-500/10 hover:text-red-500",
+      "bg-base-200 text-base-content/60 hover:bg-red-500 hover:text-white",
   };
 
   return (
@@ -650,7 +647,7 @@ const ManageUsers = () => {
                         <div className="flex min-w-[190px] items-center gap-2 text-sm text-base-content/60">
                           <FaEnvelope
                             size={11}
-                            className="shrink-0 text-base-content/30"
+                            className="shrink-0 text-primary"
                           />
                           <span className="truncate">
                             {user.email || "No email"}
@@ -661,10 +658,7 @@ const ManageUsers = () => {
                       {/* Joined */}
                       <td>
                         <div className="flex items-center gap-2 whitespace-nowrap text-xs text-base-content/50">
-                          <FaCalendarAlt
-                            size={11}
-                            className="text-base-content/30"
-                          />
+                          <FaCalendarAlt size={11} className="text-primary" />
                           {formatDate(user.createdAt)}
                         </div>
                       </td>
