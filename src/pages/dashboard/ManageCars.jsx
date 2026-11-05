@@ -144,7 +144,7 @@ const ActionButton = ({ title, onClick, variant = "default", children }) => {
     default:
       "bg-base-200 text-base-content/60 hover:bg-primary hover:text-white",
     delete:
-      "bg-base-200 text-base-content/60 hover:bg-red-500/10 hover:text-red-500",
+      "bg-base-200 text-base-content/60 hover:bg-red-500 hover:text-white",
   };
 
   return (

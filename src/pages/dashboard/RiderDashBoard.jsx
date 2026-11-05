@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 
 import {
   FiTruck,
-  FiCalendar,
   FiDollarSign,
   FiCreditCard,
   FiRefreshCw,
@@ -31,6 +30,7 @@ import {
 
 import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { FaCalendarAlt, FaCar, FaCreditCard } from "react-icons/fa";
 
 // ==================================================
 // BRAND COLORS
@@ -416,13 +416,13 @@ const RiderDashboard = () => {
       title: "Total Vehicles",
       value: formatNumber(totalCars),
       description: "Vehicles listed on Wheelzy",
-      icon: FiTruck,
+      icon: FaCar,
     },
     {
       title: "Total Rentals",
       value: formatNumber(totalRentals),
       description: "All recorded rental bookings",
-      icon: FiCalendar,
+      icon: FaCalendarAlt,
     },
     {
       title: "Active Rentals",
@@ -440,7 +440,7 @@ const RiderDashboard = () => {
       title: "Total Payments",
       value: formatNumber(totalPayments),
       description: "Recorded payment transactions",
-      icon: FiCreditCard,
+      icon: FaCreditCard,
     },
     {
       title: "Total Earnings",
@@ -887,7 +887,7 @@ const RiderDashboard = () => {
               </div>
 
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <FiTruck size={19} />
+                <FaCar size={19} />
               </div>
             </div>
 
@@ -903,7 +903,7 @@ const RiderDashboard = () => {
               </div>
 
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <FiTruck size={22} />
+                <FaCar size={22} />
               </div>
             </div>
 
@@ -944,7 +944,7 @@ const RiderDashboard = () => {
               </div>
 
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <FiCalendar size={19} />
+                <FaCalendarAlt size={19} />
               </div>
             </div>
 
@@ -1014,7 +1014,7 @@ const RiderDashboard = () => {
               </div>
 
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <FiCreditCard size={19} />
+                <FaCreditCard size={19} />
               </div>
             </div>
 
@@ -1075,7 +1075,7 @@ const RiderDashboard = () => {
               </div>
 
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <FiCalendar size={19} />
+                <FaCalendarAlt size={19} />
               </div>
             </div>
 
@@ -1088,7 +1088,7 @@ const RiderDashboard = () => {
                   >
                     <div className="flex min-w-0 items-center gap-3">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                        <FiTruck size={18} />
+                        <FaCar size={18} />
                       </div>
 
                       <div className="min-w-0">

@@ -69,18 +69,31 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const ActionButton = ({ icon: Icon, label, onClick, disabled = false }) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    title={label}
-    aria-label={label}
-    className="w-9 h-9 rounded-xl flex items-center justify-center bg-base-200 border border-base-300 text-base-content/60 hover:bg-primary hover:text-primary-content hover:border-primary transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
-  >
-    <Icon size={13} />
-  </button>
-);
+const ActionButton = ({
+  icon: Icon,
+  label,
+  onClick,
+  disabled = false,
+  variant = "primary",
+}) => {
+  const variants = {
+    primary: "hover:bg-primary hover:text-primary-content hover:border-primary",
+    error: "hover:bg-red-500 hover:text-white",
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      title={label}
+      aria-label={label}
+      className={`w-9 h-9 rounded-xl flex items-center justify-center bg-base-200 border border-base-300 text-base-content/60 ${variants[variant]} transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed`}
+    >
+      <Icon size={13} />
+    </button>
+  );
+};
 
 const ModalOverlay = ({ children, onClose }) => (
   <motion.div
@@ -563,6 +576,7 @@ const MyManagedCars = () => {
                           icon={FaTrash}
                           label="Delete vehicle"
                           onClick={() => handleDelete(car)}
+                          variant="error"
                           disabled={!!deletingId}
                         />
                       </div>

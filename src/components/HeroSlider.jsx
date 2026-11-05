@@ -112,7 +112,7 @@ const HeroSlider = ({ cars = [] }) => {
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-4 tracking-tight">
                 Drive the Future
                 <br />
-                <span className="text-primary">with Wheelzy</span>
+                <span className="text-accent">with Wheelzy</span>
               </h1>
 
               {/* Sub headline */}

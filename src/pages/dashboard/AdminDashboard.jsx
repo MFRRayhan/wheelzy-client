@@ -14,6 +14,7 @@ import {
   FiClock,
   FiXCircle,
   FiAlertCircle,
+  FiCamera,
 } from "react-icons/fi";
 
 import {
@@ -32,6 +33,7 @@ import {
 } from "recharts";
 
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { FaCalendar, FaCalendarAlt, FaCar, FaCreditCard } from "react-icons/fa";
 
 // --------------------------------------------------
 // Brand Colors
@@ -399,21 +401,21 @@ const AdminDashboard = () => {
       title: "Total Vehicles",
       value: formatNumber(totalCars),
       description: "Vehicles listed on Wheelzy",
-      icon: FiTruck,
+      icon: FaCar,
       color: BRAND,
     },
     {
       title: "Total Rentals",
       value: formatNumber(totalRentals),
       description: "Recorded rental bookings",
-      icon: FiCalendar,
+      icon: FaCalendarAlt,
       color: BRAND,
     },
     {
       title: "Total Payments",
       value: formatNumber(totalPayments),
       description: "Recorded payment transactions",
-      icon: FiCreditCard,
+      icon: FaCreditCard,
       color: BRAND,
     },
     {

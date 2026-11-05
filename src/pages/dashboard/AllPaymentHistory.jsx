@@ -183,7 +183,7 @@ const PaymentDetailsModal = ({ payment, onClose }) => {
             <button
               type="button"
               onClick={onClose}
-              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-lg bg-base-100 text-base-content/50 transition hover:bg-base-300 hover:text-base-content"
+              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-lg bg-base-100 text-base-content/50 transition hover:bg-red-500 hover:text-white z-50"
               aria-label="Close modal"
             >
               <FaTimes size={12} />
