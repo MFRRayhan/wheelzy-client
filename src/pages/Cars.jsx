@@ -13,6 +13,7 @@ import {
 } from "react-icons/fa6";
 import { FaSearch, FaArrowRight } from "react-icons/fa";
 import { BsFuelPumpDiesel } from "react-icons/bs";
+import CarCard from "../components/CarCard";
 
 const containerVariants = {
   hidden: {},
@@ -129,89 +130,7 @@ const Cars = ({ isFeatured = false }) => {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
         >
           {currentCars.map((car) => (
-            <motion.div
-              key={car._id}
-              variants={cardVariants}
-              className="car-card group"
-            >
-              {/* Car Image */}
-              <div className="relative h-48 overflow-hidden bg-base-200">
-                <img
-                  src={car.bannerImage || "/placeholder.jpg"}
-                  alt={car.carName || "Car"}
-                  className="car-card-img transition-transform duration-500 group-hover:scale-105"
-                />
-
-                {/* Subtle Image Overlay */}
-                <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
-
-                {/* Availability Badge */}
-                <span
-                  className={`absolute top-3 left-3 text-xs font-semibold px-2.5 py-1 rounded-lg ${
-                    car.isBooked ? "badge-booked" : "badge-available"
-                  }`}
-                >
-                  {car.isBooked ? "Booked" : "Available"}
-                </span>
-              </div>
-
-              {/* Car Details */}
-              <div className="p-5 space-y-3">
-                {/* Car Name */}
-                <h3 className="font-bold text-base-content text-base leading-tight truncate">
-                  {car.carName}
-                </h3>
-
-                {/* Car Information */}
-                <div className="flex items-center justify-between text-xs text-base-content/55">
-                  <div className="flex items-center gap-1.5">
-                    <BsFuelPumpDiesel className="text-primary" />
-                    <span>{car.carType || "General"}</span>
-                  </div>
-
-                  <div className="flex items-center gap-1">
-                    <FaLocationDot className="text-primary" />
-                    <span className="max-w-20 truncate">{car.location}</span>
-                  </div>
-                </div>
-
-                {/* Rental Fee and Rider Information */}
-                <div className="flex items-center justify-between pt-3 border-t border-base-200">
-                  <div className="flex items-center gap-1 font-bold text-base-content">
-                    {car.rentalFee > 0 ? (
-                      <>
-                        <FaBangladeshiTakaSign className="text-primary text-sm" />
-
-                        <span className="text-lg">{car.rentalFee}</span>
-
-                        <span className="text-xs text-base-content/40 font-normal ml-0.5">
-                          /day
-                        </span>
-                      </>
-                    ) : (
-                      <span className="text-sm font-semibold text-emerald-600">
-                        Free
-                      </span>
-                    )}
-                  </div>
-
-                  {car.riderName && (
-                    <div className="flex items-center gap-1 text-xs text-base-content/45">
-                      <FaUser className="text-primary/60" />
-                      <span className="max-w-16 truncate">{car.riderName}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Single CTA */}
-                <Link
-                  to={`/cars/${car._id}`}
-                  className="block w-full text-center bg-primary text-primary-content text-sm font-semibold py-2.5 rounded-xl hover:opacity-90 transition-all duration-200 mt-1 shadow-sm hover:shadow-md"
-                >
-                  View Details
-                </Link>
-              </div>
-            </motion.div>
+            <CarCard key={car._id} car={car} />
           ))}
         </motion.div>
       )}
